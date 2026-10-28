@@ -439,9 +439,16 @@ def api_kpis():
     return jsonify(kpi_data)
 
 
-if __name__ == "__main__":
-    print("Initializing database and administrator account...")
+# Auto-initialize database on startup (ensures DB tables & demo admin are ready under Gunicorn & WSGI)
+try:
     init_db()
     seed_data(target_orders=2200)
-    print("OmniStore Business Intelligence Dashboard running on http://127.0.0.1:5000")
-    app.run(host="0.0.0.0", port=5000, debug=True)
+except Exception as e:
+    app.logger.warning(f"Database auto-initialization notice: {e}")
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    debug_mode = os.environ.get("FLASK_DEBUG", "False").lower() in ("true", "1")
+    print(f"OmniStore Business Intelligence Dashboard running on http://0.0.0.0:{port}")
+    app.run(host="0.0.0.0", port=port, debug=debug_mode)
