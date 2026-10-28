@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Create Executive Account - OmniStore BI{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card" style="max-width: 500px;">
+        <div class="auth-header">
+            <div class="brand-icon mx-auto mb-3" style="width: 44px; height: 44px; font-size: 1.3rem;">
+                <i class="fa-solid fa-user-plus"></i>
+            </div>
+            <h4 class="fw-bold text-dark mb-1">Create Executive Account</h4>
+            <p class="text-muted small mb-0">Register to access aggregated e-commerce store metrics and management reports.</p>
+        </div>
+
+        <div class="auth-body">
+            <form method="POST" action="{{ url_for('register') }}" id="registerForm" novalidate>
+                <!-- Full Name -->
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted mb-1">Full Name</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted">
+                            <i class="fa-solid fa-id-card"></i>
+                        </span>
+                        <input type="text" name="name" class="form-control border-start-0" 
+                               placeholder="e.g. Sarah Jenkins" value="{{ name if name else '' }}" required autofocus>
+                    </div>
+                </div>
+
+                <!-- Email Address -->
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted mb-1">Business Email Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted">
+                            <i class="fa-solid fa-envelope"></i>
+                        </span>
+                        <input type="email" name="email" class="form-control border-start-0" 
+                               placeholder="e.g. s.jenkins@omnistore.bi" value="{{ email if email else '' }}" required>
+                    </div>
+                </div>
+
+                <!-- Username & Role Selection -->
+                <div class="row g-2 mb-3">
+                    <div class="col-7">
+                        <label class="form-label small fw-bold text-muted mb-1">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted">
+                                <i class="fa-solid fa-at"></i>
+                            </span>
+                            <input type="text" name="username" class="form-control border-start-0" 
+                                   placeholder="sjenkins" value="{{ username if username else '' }}" required>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <label class="form-label small fw-bold text-muted mb-1">Management Role</label>
+                        <select name="role" class="form-select">
+                            <option value="Executive">Executive</option>
+                            <option value="Store Manager">Store Manager</option>
+                            <option value="BI Analyst">BI Analyst</option>
+                            <option value="Finance Lead">Finance Lead</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Password with Show/Hide -->
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted mb-1">Password (min. 6 characters)</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted">
+                            <i class="fa-solid fa-lock"></i>
+                        </span>
+                        <input type="password" name="password" id="regPassword" class="form-control border-start-0 border-end-0" 
+                               placeholder="Create secure password" required minlength="6">
+                        <button class="btn btn-outline-secondary border-start-0" type="button" id="toggleRegPasswordBtn">
+                            <i class="fa-solid fa-eye" id="toggleRegIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-muted mb-1">Confirm Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted">
+                            <i class="fa-solid fa-shield-check"></i>
+                        </span>
+                        <input type="password" name="confirm_password" id="regConfirmPassword" class="form-control border-start-0 border-end-0" 
+                               placeholder="Repeat password" required>
+                        <button class="btn btn-outline-secondary border-start-0" type="button" id="toggleConfirmBtn">
+                            <i class="fa-solid fa-eye" id="toggleConfirmIcon"></i>
+                        </button>
+                    </div>
+                    <div id="passwordMismatchNote" class="text-danger small mt-1 d-none">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i> Passwords do not match.
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold shadow-sm mb-3" id="submitRegBtn">
+                    <i class="fa-solid fa-user-check me-1"></i> Complete Registration & Enter
+                </button>
+
+                <!-- Link to Login -->
+                <div class="text-center small text-secondary">
+                    Already have an account? 
+                    <a href="{{ url_for('login') }}" class="fw-bold text-primary text-decoration-none">
+                        Sign In here
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Toggle Password Visibility
+    function setupPasswordToggle(btnId, inputId, iconId) {
+        const btn = document.getElementById(btnId);
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+
+        btn.addEventListener('click', function() {
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    }
+
+    setupPasswordToggle('toggleRegPasswordBtn', 'regPassword', 'toggleRegIcon');
+    setupPasswordToggle('toggleConfirmBtn', 'regConfirmPassword', 'toggleConfirmIcon');
+
+    // Real-time client password match verification
+    const pwd1 = document.getElementById('regPassword');
+    const pwd2 = document.getElementById('regConfirmPassword');
+    const mismatch = document.getElementById('passwordMismatchNote');
+
+    function checkMatch() {
+        if (pwd2.value.length > 0 && pwd1.value !== pwd2.value) {
+            mismatch.classList.remove('d-none');
+        } else {
+            mismatch.classList.add('d-none');
+        }
+    }
+
+    pwd1.addEventListener('input', checkMatch);
+    pwd2.addEventListener('input', checkMatch);
+</script>
+{% endblock %}

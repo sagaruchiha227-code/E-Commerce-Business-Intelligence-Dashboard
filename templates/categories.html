@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Category & Regional Analysis{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="fw-bold mb-1 text-dark">Category & Regional Performance Matrix</h2>
+        <p class="text-muted small mb-0">Cross-dimensional business performance, category return vulnerabilities, and geographical market penetration.</p>
+    </div>
+</div>
+
+<!-- Visualizations Row -->
+<div class="row g-3 mb-4">
+    <div class="col-12 col-lg-7">
+        <div class="dashboard-card h-100">
+            <div class="dashboard-card-header">
+                <h5>Product Category Comparison (Matplotlib)</h5>
+            </div>
+            <div class="dashboard-card-body text-center">
+                {% if category_chart_b64 %}
+                    <img src="data:image/png;base64,{{ category_chart_b64 }}" class="img-fluid rounded border" alt="Category Comparison Chart">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-5">
+        <div class="dashboard-card h-100">
+            <div class="dashboard-card-header">
+                <h5>Regional Revenue Share (Matplotlib)</h5>
+            </div>
+            <div class="dashboard-card-body text-center">
+                {% if region_chart_b64 %}
+                    <img src="data:image/png;base64,{{ region_chart_b64 }}" class="img-fluid rounded border" alt="Regional Share Chart">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Category Performance Table -->
+<div class="dashboard-card mb-4">
+    <div class="dashboard-card-header">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-layer-group text-primary"></i>
+            <h5>Product Category Economics & Quality Benchmarks</h5>
+        </div>
+        <span class="badge bg-light text-muted border">Ranked by Net Realized Sales</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-executive align-middle">
+            <thead>
+                <tr>
+                    <th>Product Category</th>
+                    <th class="text-end">Gross Sales</th>
+                    <th class="text-end">Discounts</th>
+                    <th class="text-end">Returns</th>
+                    <th class="text-end">Net Sales</th>
+                    <th class="text-center">Share of Sales</th>
+                    <th class="text-center">Return Rate</th>
+                    <th class="text-end">Orders</th>
+                    <th class="text-end">Net AOV</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in categories %}
+                <tr>
+                    <td class="fw-bold">{{ c.category }}</td>
+                    <td class="text-end">${{ "{:,.2f}".format(c.gross_sales) }}</td>
+                    <td class="text-end text-danger">-${{ "{:,.2f}".format(c.discounts) }}</td>
+                    <td class="text-end text-danger">-${{ "{:,.2f}".format(c.returns) }}</td>
+                    <td class="text-end fw-bold text-primary">${{ "{:,.2f}".format(c.net_sales) }}</td>
+                    <td class="text-center">
+                        <div class="d-flex align-items-center justify-content-center gap-2">
+                            <div class="progress flex-grow-1" style="height: 6px; max-width: 60px;">
+                                <div class="progress-bar bg-primary" style="width: {{ c.share_pct }}%"></div>
+                            </div>
+                            <span class="fw-semibold small">{{ c.share_pct }}%</span>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        {% if c.return_rate_pct > 8.0 %}
+                            <span class="badge bg-danger-subtle text-danger fw-semibold">{{ c.return_rate_pct }}%</span>
+                        {% else %}
+                            <span class="badge bg-success-subtle text-success fw-semibold">{{ c.return_rate_pct }}%</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">{{ "{:,}".format(c.order_count) }}</td>
+                    <td class="text-end">${{ "{:,.2f}".format(c.aov) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Cross-Tabulation Matrix: Category x Region Net Sales -->
+<div class="dashboard-card mb-4">
+    <div class="dashboard-card-header">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-table-cells text-primary"></i>
+            <h5>Category &times; Geographic Region Cross-Tabulation ($ Net Sales)</h5>
+        </div>
+        <span class="badge bg-light text-muted border">Multi-Dimensional Cross-Tab</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-executive align-middle text-nowrap">
+            <thead class="table-light">
+                <tr>
+                    <th>Category</th>
+                    {% for reg in matrix_regions %}
+                        <th class="text-end">{{ reg }}</th>
+                    {% endfor %}
+                    <th class="text-end bg-primary-subtle text-primary">Category Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in category_region_matrix %}
+                <tr>
+                    <td class="fw-bold">{{ row.category }}</td>
+                    {% for reg in matrix_regions %}
+                        <td class="text-end">${{ "{:,.2f}".format(row[reg]) }}</td>
+                    {% endfor %}
+                    <td class="text-end fw-bold bg-primary-subtle text-primary">${{ "{:,.2f}".format(row.total) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

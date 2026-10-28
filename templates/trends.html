@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Revenue Trends & MoM Growth Deep-Dive{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="fw-bold mb-1 text-dark">Revenue Trends & Period-over-Period Growth</h2>
+        <p class="text-muted small mb-0">Longitudinal store performance, NumPy MoM acceleration calculations, and seasonal trend dynamics.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('export_csv') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fa-solid fa-file-csv me-1"></i> Export Full Ledger (.CSV)
+        </a>
+    </div>
+</div>
+
+<!-- Matplotlib High-Resolution Trend Figure Card -->
+<div class="dashboard-card">
+    <div class="dashboard-card-header">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-chart-line text-primary"></i>
+            <h5>Matplotlib Multi-Axis Financial Trajectory</h5>
+        </div>
+        <span class="badge bg-light text-muted border">NumPy Vectorized Growth Calculation</span>
+    </div>
+    <div class="dashboard-card-body text-center">
+        {% if trend_chart_b64 %}
+            <img src="data:image/png;base64,{{ trend_chart_b64 }}" class="img-fluid rounded border shadow-sm" alt="Matplotlib Revenue Trend">
+        {% else %}
+            <p class="text-muted py-4">No trend records found.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Comprehensive Monthly Financial Ledger Table -->
+<div class="dashboard-card">
+    <div class="dashboard-card-header">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-calculator text-primary"></i>
+            <h5>Consolidated Monthly Accounting Ledger</h5>
+        </div>
+        <span class="badge bg-primary-subtle text-primary fw-semibold">{{ monthly_trends|length }} Reporting Periods</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-executive align-middle text-nowrap">
+            <thead>
+                <tr>
+                    <th>Period</th>
+                    <th class="text-end">Gross Sales</th>
+                    <th class="text-end">Discounts</th>
+                    <th class="text-end">Returns</th>
+                    <th class="text-end">Net Sales</th>
+                    <th class="text-center">MoM Net Growth</th>
+                    <th class="text-end">Valid Orders</th>
+                    <th class="text-center">MoM Order Growth</th>
+                    <th class="text-end">Net AOV</th>
+                    <th class="text-end">Basket Size</th>
+                    <th class="text-end">Cancelled Orders</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in monthly_trends|reverse %}
+                <tr>
+                    <td class="fw-bold">{{ row.month }}</td>
+                    <td class="text-end">${{ "{:,.2f}".format(row.gross_sales) }}</td>
+                    <td class="text-end text-danger">-${{ "{:,.2f}".format(row.discounts) }}</td>
+                    <td class="text-end text-danger">-${{ "{:,.2f}".format(row.returns) }}</td>
+                    <td class="text-end fw-bold text-primary">${{ "{:,.2f}".format(row.net_sales) }}</td>
+                    <td class="text-center">
+                        {% if row.mom_net_growth_pct > 0 %}
+                            <span class="badge-growth-pos"><i class="fa-solid fa-arrow-up"></i> +{{ row.mom_net_growth_pct }}%</span>
+                        {% elif row.mom_net_growth_pct < 0 %}
+                            <span class="badge-growth-neg"><i class="fa-solid fa-arrow-down"></i> {{ row.mom_net_growth_pct }}%</span>
+                        {% else %}
+                            <span class="text-muted small">0.0%</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">{{ "{:,}".format(row.order_count) }}</td>
+                    <td class="text-center">
+                        {% if row.mom_order_growth_pct > 0 %}
+                            <span class="badge-growth-pos"><i class="fa-solid fa-arrow-up"></i> +{{ row.mom_order_growth_pct }}%</span>
+                        {% elif row.mom_order_growth_pct < 0 %}
+                            <span class="badge-growth-neg"><i class="fa-solid fa-arrow-down"></i> {{ row.mom_order_growth_pct }}%</span>
+                        {% else %}
+                            <span class="text-muted small">0.0%</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">${{ "{:,.2f}".format(row.aov) }}</td>
+                    <td class="text-end">{{ "{:.1f}".format(row.units_sold / row.order_count if row.order_count > 0 else 0) }} units</td>
+                    <td class="text-end text-muted">{{ row.cancelled_orders }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="11" class="text-center text-muted py-4">No monthly records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

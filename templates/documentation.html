@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}KPI Documentation & Governance Standards{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-3">
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <h2 class="fw-bold mb-0 text-dark">KPI Documentation & Accounting Governance</h2>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-semibold px-2 py-1">
+                    <i class="fa-solid fa-book-bookmark me-1"></i> Technical Reference Sheet
+                </span>
+            </div>
+            <p class="text-muted small mb-0">Formal mathematical definitions, management rationale, data cleaning treatments, and edge-case boundaries.</p>
+        </div>
+        <div>
+            <button onclick="window.print()" class="btn btn-outline-secondary btn-sm fw-semibold">
+                <i class="fa-solid fa-print me-1"></i> Print / Save as PDF
+            </button>
+        </div>
+    </div>
+
+    <!-- Quick Navigation Anchor Pills -->
+    <div class="card border-0 shadow-sm rounded-3 p-3 bg-white mb-4">
+        <div class="d-flex flex-wrap align-items-center gap-2 small">
+            <span class="fw-bold text-muted text-uppercase me-2"><i class="fa-solid fa-compass me-1"></i> Quick Jump:</span>
+            <a href="#core-metrics" class="badge bg-light text-dark border text-decoration-none py-2 px-3">1. Seven Core KPI Definitions</a>
+            <a href="#governance-rules" class="badge bg-light text-dark border text-decoration-none py-2 px-3">2. Data Cleaning & Technical Handling Rules</a>
+            <a href="#master-matrix" class="badge bg-light text-dark border text-decoration-none py-2 px-3">3. Master Accounting Matrix</a>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 1: SEVEN CORE BUSINESS METRIC DEFINITIONS        -->
+    <!-- ======================================================== -->
+    <div id="core-metrics" class="mb-5">
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="bg-primary text-white rounded p-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                <i class="fa-solid fa-calculator"></i>
+            </div>
+            <h4 class="fw-bold text-dark mb-0">1. Core Business Performance Metrics</h4>
+        </div>
+
+        <div class="row g-4">
+            {% for kpi in kpi_list %}
+            <div class="col-12 col-lg-6">
+                <div class="card border shadow-sm rounded-3 h-100 bg-white">
+                    <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-primary text-white rounded-circle p-2 fw-bold" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">
+                                {{ kpi.number }}
+                            </span>
+                            <h5 class="fw-bold mb-0 text-dark">{{ kpi.name }}</h5>
+                        </div>
+                        <span class="badge bg-light text-muted border">{{ kpi.category }}</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- KaTeX LaTeX Formula Display -->
+                        <div class="text-muted small fw-bold text-uppercase">Mathematical Formula</div>
+                        <div class="formula-box text-center">
+                            $${{ kpi.formula }}$$
+                        </div>
+                        <div class="small text-secondary mb-3 text-center">
+                            <code>{{ kpi.plain_formula }}</code>
+                        </div>
+
+                        <!-- Description -->
+                        <p class="text-secondary small mb-3">
+                            {{ kpi.description }}
+                        </p>
+
+                        <!-- Inclusions & Exclusions -->
+                        <div class="p-3 bg-light rounded-3 small">
+                            <div class="mb-2">
+                                <strong class="text-success"><i class="fa-solid fa-check-circle me-1"></i> Inclusions:</strong>
+                                <span class="text-muted">{{ kpi.inclusions }}</span>
+                            </div>
+                            <div class="mb-2">
+                                <strong class="text-danger"><i class="fa-solid fa-circle-xmark me-1"></i> Exclusions:</strong>
+                                <span class="text-muted">{{ kpi.exclusions }}</span>
+                            </div>
+                            <div>
+                                <strong class="text-dark"><i class="fa-solid fa-briefcase me-1"></i> Management Utility:</strong>
+                                <span class="text-secondary">{{ kpi.management_utility }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+    <!-- ======================================================== -->
+    <!-- SECTION 2: DATA CLEANING & TECHNICAL GOVERNANCE RULES     -->
+    <!-- ======================================================== -->
+    <div id="governance-rules" class="mb-5">
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="bg-warning text-dark rounded p-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                <i class="fa-solid fa-scale-balanced"></i>
+            </div>
+            <h4 class="fw-bold text-dark mb-0">2. Implementation Logic, Exclusions & Data Handling</h4>
+        </div>
+
+        <div class="row g-4">
+            {% for rule in governance_rules %}
+            <div class="col-12 col-md-6">
+                <div class="card border shadow-sm rounded-3 h-100 bg-white p-4">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="{{ rule.icon }} text-{{ rule.color }} fs-5"></i>
+                        <h5 class="fw-bold text-dark mb-0">{{ rule.topic }}</h5>
+                    </div>
+                    <div class="badge bg-{{ rule.color }}-subtle text-{{ rule.color }} fw-bold align-self-start mb-3 px-2 py-1">
+                        {{ rule.rule }}
+                    </div>
+                    <p class="text-secondary small mb-0" style="line-height: 1.65;">
+                        {{ rule.details }}
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+    <!-- ======================================================== -->
+    <!-- SECTION 3: MASTER ACCOUNTING MATRIX                     -->
+    <!-- ======================================================== -->
+    <div id="master-matrix" class="dashboard-card mb-4">
+        <div class="dashboard-card-header">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-table text-primary"></i>
+                <h5>3. Master KPI Accounting Governance Matrix</h5>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-executive align-middle">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Standard Business Definition</th>
+                        <th>Cancelled Orders</th>
+                        <th>Discounts & Returns</th>
+                        <th>Zero Baseline Behavior</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="fw-bold text-dark">1. Gross Sales</td>
+                        <td>Sum of quantity &times; unit price</td>
+                        <td><span class="badge bg-danger-subtle text-danger">Strictly Excluded</span></td>
+                        <td>Pre-deduction baseline</td>
+                        <td>Returns $0.00 if no valid records</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold text-dark">2. Net Sales</td>
+                        <td>Gross Sales &minus; Discounts &minus; Returns</td>
+                        <td><span class="badge bg-danger-subtle text-danger">Strictly Excluded</span></td>
+                        <td><span class="badge bg-warning-subtle text-warning-emphasis">Fully Deducted</span></td>
+                        <td>Returns $0.00 if no valid records</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold text-dark">3. Order Count</td>
+                        <td>Distinct valid orders (excl. cancelled)</td>
+                        <td><span class="badge bg-danger-subtle text-danger">Omitted from count</span></td>
+                        <td>N/A</td>
+                        <td>Returns 0</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold text-dark">4. Average Order Value</td>
+                        <td>Net Sales / Valid Order Count</td>
+                        <td><span class="badge bg-danger-subtle text-danger">Strictly Excluded</span></td>
+                        <td>Calculated on Net Realized</td>
+                        <td>Zero-division guard returns $0.00</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold text-dark">5. Revenue Growth</td>
+                        <td>((Current &minus; Previous) / Previous) &times; 100</td>
+                        <td>Excluded from periods</td>
+                        <td>Applied to net revenue</td>
+                        <td>NumPy <code>nan_to_num</code> returns 0.0% (N/A)</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold text-dark">6. Category Revenue</td>
+                        <td>Sum of net sales by product category</td>
+                        <td><span class="badge bg-danger-subtle text-danger">Strictly Excluded</span></td>
+                        <td>Category discounts & returns deducted</td>
+                        <td>Empty categories omitted</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold text-dark">7. Regional Revenue</td>
+                        <td>Sum of net sales by geographic region</td>
+                        <td><span class="badge bg-danger-subtle text-danger">Strictly Excluded</span></td>
+                        <td>Regional discounts & returns deducted</td>
+                        <td>Empty regions omitted</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

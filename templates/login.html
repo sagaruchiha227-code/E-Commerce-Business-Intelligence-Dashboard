@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In - OmniStore BI{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="brand-icon mx-auto mb-3" style="width: 44px; height: 44px; font-size: 1.3rem;">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h4 class="fw-bold text-dark mb-1">Executive Portal Login</h4>
+            <p class="text-muted small mb-0">Sign in to access management dashboards and business performance analytics.</p>
+        </div>
+
+        <div class="auth-body">
+            <form method="POST" action="{{ url_for('login') }}" novalidate>
+                <input type="hidden" name="next" value="{{ next_url }}">
+
+                <!-- Identifier: Email or Username -->
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted mb-1">Email Address or Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                        <input type="text" name="identifier" id="identifierInput" class="form-control border-start-0" 
+                               placeholder="e.g. admin@omnistore.bi" value="{{ identifier if identifier else '' }}" required autofocus>
+                    </div>
+                </div>
+
+                <!-- Password with Show/Hide toggle -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="form-label small fw-bold text-muted mb-0">Password</label>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted">
+                            <i class="fa-solid fa-key"></i>
+                        </span>
+                        <input type="password" name="password" id="passwordInput" class="form-control border-start-0 border-end-0" 
+                               placeholder="Enter your password" required>
+                        <button class="btn btn-outline-secondary border-start-0" type="button" id="togglePasswordBtn" title="Toggle password visibility">
+                            <i class="fa-solid fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold shadow-sm mb-3">
+                    <i class="fa-solid fa-right-to-bracket me-1"></i> Sign In to Dashboard
+                </button>
+
+                <!-- Link to Register -->
+                <div class="text-center small text-secondary">
+                    Don't have an account? 
+                    <a href="{{ url_for('register') }}" class="fw-bold text-primary text-decoration-none">
+                        Register here
+                    </a>
+                </div>
+            </form>
+
+            <hr class="my-4">
+
+            <!-- Demo Credentials Helper Card -->
+            <div class="p-3 bg-light rounded-3 border">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="small fw-bold text-dark">
+                        <i class="fa-solid fa-circle-info text-primary me-1"></i> Academic Demo Credentials
+                    </div>
+                    <button type="button" class="btn btn-xs btn-outline-primary" style="font-size: 0.75rem;" onclick="fillDemoCredentials()">
+                        <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Autofill
+                    </button>
+                </div>
+                <div class="small text-secondary">
+                    <div><strong>Username / Email:</strong> <code>admin@omnistore.bi</code> (or <code>admin</code>)</div>
+                    <div><strong>Password:</strong> <code>Admin123!</code> &bull; Role: <em>Executive Director</em></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Show/Hide Password functionality
+    const toggleBtn = document.getElementById('togglePasswordBtn');
+    const passwordInput = document.getElementById('passwordInput');
+    const toggleIcon = document.getElementById('toggleIcon');
+
+    toggleBtn.addEventListener('click', function() {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.classList.remove('fa-eye');
+            toggleIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.classList.remove('fa-eye-slash');
+            toggleIcon.classList.add('fa-eye');
+        }
+    });
+
+    // 1-Click Autofill Demo Credentials
+    function fillDemoCredentials() {
+        document.getElementById('identifierInput').value = 'admin@omnistore.bi';
+        document.getElementById('passwordInput').value = 'Admin123!';
+    }
+</script>
+{% endblock %}

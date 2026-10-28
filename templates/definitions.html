@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}KPI Definitions & Exclusions Sheet{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1 text-dark">KPI Definitions & Governance Standards</h2>
+        <p class="text-muted small mb-0">Formal accounting formulas, management rationale, boundary conditions, and inclusion/exclusion policies.</p>
+    </div>
+    <div>
+        <button onclick="window.print()" class="btn btn-outline-secondary btn-sm">
+            <i class="fa-solid fa-print me-1"></i> Print / Save as PDF
+        </button>
+    </div>
+</div>
+
+<!-- Governance & Boundary Treatment Standards Banner -->
+<div class="card border-0 shadow-sm rounded-3 mb-4 bg-white">
+    <div class="card-body p-4">
+        <h5 class="fw-bold text-dark mb-3">
+            <i class="fa-solid fa-scale-balanced text-primary me-2"></i> Core Governance & Boundary Rules
+        </h5>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="border rounded-3 p-3 h-100 bg-light">
+                    <h6 class="fw-bold text-danger mb-2">
+                        <i class="fa-solid fa-ban me-1"></i> Treatment of Cancelled Orders
+                    </h6>
+                    <p class="small text-muted mb-0">
+                        Orders with <code>order_status = 'Cancelled'</code> are <strong>strictly excluded</strong> from Gross Sales, Net Sales, Order Count, Discounts, and Returns. They represent aborted transactions that generated no fulfilled economic value. However, they are tracked in an operational risk KPI (<em>Cancellation Rate</em>).
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="border rounded-3 p-3 h-100 bg-light">
+                    <h6 class="fw-bold text-warning mb-2">
+                        <i class="fa-solid fa-tag me-1"></i> Treatment of Discounts & Markdowns
+                    </h6>
+                    <p class="small text-muted mb-0">
+                        Discounts represent recognized price concessions (vouchers, promotional campaign codes, item-level discounts). They are <strong>subtracted from Gross Sales</strong> to reach Net Sales. Discounts on cancelled orders are ignored.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="border rounded-3 p-3 h-100 bg-light">
+                    <h6 class="fw-bold text-primary mb-2">
+                        <i class="fa-solid fa-arrow-rotate-left me-1"></i> Treatment of Merchandise Returns
+                    </h6>
+                    <p class="small text-muted mb-0">
+                        Customer refunds on Delivered or Completed orders are captured in <code>return_amount_optional</code> and <strong>deducted from Gross Sales</strong> to establish Net Realized Revenue. Returns cannot occur on Cancelled orders.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detailed KPI Reference Cards -->
+<div class="row g-4 mb-4">
+    {% for kpi in kpis %}
+    <div class="col-12 col-lg-6">
+        <div class="card border shadow-sm rounded-3 h-100 bg-white">
+            <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-primary-subtle text-primary fw-bold">{{ kpi.category }}</span>
+                    <h5 class="fw-bold mb-0 text-dark">{{ kpi.name }}</h5>
+                </div>
+                <span class="badge bg-light text-muted border">{{ kpi.format|upper }}</span>
+            </div>
+            <div class="card-body p-4">
+                <!-- Mathematical Formula in KaTeX LaTeX -->
+                <label class="small fw-bold text-muted text-uppercase">Mathematical Formula</label>
+                <div class="formula-box text-center">
+                    $${{ kpi.formula }}$$
+                </div>
+                <div class="small text-secondary mb-3 text-center">
+                    <code>{{ kpi.plain_formula }}</code>
+                </div>
+
+                <!-- Description -->
+                <p class="text-secondary small mb-3">
+                    {{ kpi.description }}
+                </p>
+
+                <!-- Inclusions & Exclusions Grid -->
+                <div class="row g-2 pt-2 border-top">
+                    <div class="col-12">
+                        <div class="small">
+                            <strong class="text-success"><i class="fa-solid fa-check-circle me-1"></i> Inclusions:</strong>
+                            <span class="text-muted">{{ kpi.inclusions }}</span>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="small">
+                            <strong class="text-danger"><i class="fa-solid fa-circle-xmark me-1"></i> Exclusions:</strong>
+                            <span class="text-muted">{{ kpi.exclusions }}</span>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <div class="small bg-light p-2 rounded">
+                            <strong class="text-dark"><i class="fa-solid fa-briefcase me-1"></i> Management Utility:</strong>
+                            <span class="text-secondary">{{ kpi.management_utility }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Consolidated KPI Governance Summary Table -->
+<div class="dashboard-card mb-4">
+    <div class="dashboard-card-header">
+        <div class="d-flex align-items-center gap-2">
+            <i class="fa-solid fa-clipboard-check text-primary"></i>
+            <h5>Master KPI Definition Matrix</h5>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-executive align-middle">
+            <thead>
+                <tr>
+                    <th>KPI Name</th>
+                    <th>Category</th>
+                    <th>Standard Formula</th>
+                    <th>Cancelled Orders</th>
+                    <th>Discounts & Returns</th>
+                    <th>Format</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for kpi in kpis %}
+                <tr>
+                    <td class="fw-bold text-dark">{{ kpi.name }}</td>
+                    <td><span class="badge bg-light text-dark border">{{ kpi.category }}</span></td>
+                    <td><code>{{ kpi.plain_formula }}</code></td>
+                    <td><span class="badge bg-danger-subtle text-danger">Strictly Excluded</span></td>
+                    <td>
+                        {% if 'Net' in kpi.name %}
+                            <span class="badge bg-warning-subtle text-warning-emphasis">Deducted</span>
+                        {% elif 'Gross' in kpi.name %}
+                            <span class="badge bg-secondary-subtle text-secondary">Pre-Deduction</span>
+                        {% else %}
+                            <span class="badge bg-light text-muted">N/A</span>
+                        {% endif %}
+                    </td>
+                    <td><span class="badge bg-primary-subtle text-primary">{{ kpi.format }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

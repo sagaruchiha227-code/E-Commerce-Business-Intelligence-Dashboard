@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block title %}Turn E-Commerce Data into Business Insights{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center">
+    <div class="container py-4 position-relative" style="z-index: 2;">
+        <div class="hero-badge mx-auto">
+            <i class="fa-solid fa-sparkles text-warning"></i>
+            <span>Executive Business Intelligence Platform</span>
+        </div>
+        <h1 class="hero-title">
+            Turn E-Commerce Data<br>into <span style="background: linear-gradient(135deg, #818cf8, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Business Insights</span>
+        </h1>
+        <p class="hero-subtitle">
+            An enterprise-grade, management-oriented analytics suite delivering macro-level store performance indicators, revenue trajectories, category economics, and regional benchmarks.
+        </p>
+
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            {% if is_authenticated %}
+                <a href="{{ url_for('dashboard_view') }}" class="btn btn-hero-primary d-inline-flex align-items-center gap-2">
+                    <i class="fa-solid fa-gauge-high"></i> Go to Executive Dashboard
+                </a>
+                <a href="{{ url_for('analytics_view') }}" class="btn btn-hero-secondary d-inline-flex align-items-center gap-2">
+                    <i class="fa-solid fa-chart-line"></i> Explore Analytics
+                </a>
+            {% else %}
+                <a href="{{ url_for('register') }}" class="btn btn-hero-primary d-inline-flex align-items-center gap-2">
+                    <i class="fa-solid fa-rocket"></i> Get Started
+                </a>
+                <a href="{{ url_for('dashboard_view') }}" class="btn btn-hero-secondary d-inline-flex align-items-center gap-2">
+                    <i class="fa-solid fa-arrow-right"></i> Explore Dashboard
+                </a>
+            {% endif %}
+        </div>
+
+        <!-- Floating Live KPI Teaser Cards -->
+        <div class="row g-3 justify-content-center mt-5 text-start">
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="card border-0 rounded-3 shadow-lg bg-white p-3 text-dark">
+                    <div class="small fw-bold text-muted text-uppercase">Total Net Sales</div>
+                    <div class="fs-4 fw-bold text-primary mt-1">${{ "{:,.2f}".format(kpis.total_net_sales) }}</div>
+                    <div class="small text-muted"><span class="text-success fw-bold"><i class="fa-solid fa-check"></i> Realized</span> after returns & discounts</div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="card border-0 rounded-3 shadow-lg bg-white p-3 text-dark">
+                    <div class="small fw-bold text-muted text-uppercase">Valid Order Volume</div>
+                    <div class="fs-4 fw-bold text-success mt-1">{{ "{:,}".format(kpis.order_count) }} Orders</div>
+                    <div class="small text-muted">Excludes cancelled transactions</div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="card border-0 rounded-3 shadow-lg bg-white p-3 text-dark">
+                    <div class="small fw-bold text-muted text-uppercase">Average Order Value</div>
+                    <div class="fs-4 fw-bold text-dark mt-1">${{ "{:,.2f}".format(kpis.aov_net) }}</div>
+                    <div class="small text-muted">Average spend per customer basket</div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="card border-0 rounded-3 shadow-lg bg-white p-3 text-dark">
+                    <div class="small fw-bold text-muted text-uppercase">Growth Velocity</div>
+                    <div class="fs-4 fw-bold {% if kpis.latest_mom_growth >= 0 %}text-success{% else %}text-danger{% endif %} mt-1">
+                        {{ "{:+.1f}".format(kpis.latest_mom_growth) }}% MoM
+                    </div>
+                    <div class="small text-muted">NumPy vectorized period change</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-5 bg-white border-bottom">
+    <div class="container py-4">
+        <div class="text-center max-w-700 mx-auto mb-5">
+            <span class="badge bg-primary-subtle text-primary fw-bold text-uppercase px-3 py-2 mb-2">Core Capabilities</span>
+            <h2 class="fw-bold text-dark">Engineered for Executive Decision-Making</h2>
+            <p class="text-secondary">
+                Designed to give leadership an aggregated macro-level view of store health, revenue composition, and product velocity.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Feature 1: Business KPIs -->
+            <div class="col-12 col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper bg-primary-subtle text-primary">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Consolidated Business KPIs</h5>
+                    <p class="text-secondary small mb-0">
+                        Tracks Gross Sales, Net Realized Sales, Order Counts, and Average Order Value (AOV) with strict accounting rules for promotional markdowns and returns.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Feature 2: Revenue Analysis -->
+            <div class="col-12 col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper bg-info-subtle text-info">
+                        <i class="fa-solid fa-arrow-trend-up"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Longitudinal Revenue Trajectory</h5>
+                    <p class="text-secondary small mb-0">
+                        Visualizes monthly revenue performance over multi-year reporting cycles with dual-axis comparisons between Gross Sales, Net Sales, and Growth Velocity.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Feature 3: Category Performance -->
+            <div class="col-12 col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper bg-warning-subtle text-warning-emphasis">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Category Economics & Sizing</h5>
+                    <p class="text-secondary small mb-0">
+                        Ranks product categories by recognized net revenue, benchmarks merchandise return rates, and identifies top product volume drivers.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Feature 4: Regional Comparisons -->
+            <div class="col-12 col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper bg-success-subtle text-success">
+                        <i class="fa-solid fa-earth-americas"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Regional Revenue Distribution</h5>
+                    <p class="text-secondary small mb-0">
+                        Analyzes geographical territory contributions, market penetration, and provides a multi-dimensional Category &times; Region cross-tabulation matrix.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Feature 5: Growth Tracking -->
+            <div class="col-12 col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper bg-danger-subtle text-danger">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Period-over-Period Growth Tracking</h5>
+                    <p class="text-secondary small mb-0">
+                        Vectorized NumPy percentage-change engine automatically computes Month-over-Month (MoM) revenue acceleration and order volume dynamics.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Feature 6: Accounting Governance -->
+            <div class="col-12 col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper bg-secondary-subtle text-secondary">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Exclusions & Governance Standard</h5>
+                    <p class="text-secondary small mb-0">
+                        Transparent documentation of business formulas, cancelled order exclusions, discount deductions, refund treatments, and zero-baseline protections.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Dashboard Preview Section -->
+<section id="preview" class="py-5 bg-light">
+    <div class="container py-4">
+        <div class="text-center max-w-700 mx-auto mb-5">
+            <span class="badge bg-secondary-subtle text-secondary fw-bold text-uppercase px-3 py-2 mb-2">Live Preview</span>
+            <h2 class="fw-bold text-dark">Executive Visual Analytics in Action</h2>
+            <p class="text-secondary">
+                A seamless dashboard experience with dual visualization modes: responsive interactive charts and print-ready Matplotlib figures.
+            </p>
+        </div>
+
+        <div class="card border shadow-lg rounded-4 overflow-hidden bg-white mb-4">
+            <div class="card-header bg-dark text-white p-3 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-danger rounded-circle p-1"></span>
+                    <span class="badge bg-warning rounded-circle p-1"></span>
+                    <span class="badge bg-success rounded-circle p-1"></span>
+                    <span class="small fw-semibold ms-2 text-light">OmniStore Executive BI Suite &bull; Active Overview</span>
+                </div>
+                <span class="badge bg-primary">Reporting Window: 2024 &ndash; 2026</span>
+            </div>
+            <div class="card-body p-4 text-center">
+                {% if trend_preview_b64 %}
+                    <img src="data:image/png;base64,{{ trend_preview_b64 }}" class="img-fluid rounded border shadow-sm mb-3" alt="Revenue Trend Preview">
+                {% endif %}
+
+                <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
+                    <a href="{{ url_for('dashboard_view') }}" class="btn btn-primary px-4 fw-semibold">
+                        <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Launch Full Interactive Dashboard
+                    </a>
+                    <a href="{{ url_for('documentation_view') }}" class="btn btn-outline-secondary px-4 fw-semibold">
+                        <i class="fa-solid fa-book me-1"></i> Read KPI Governance
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Technologies & Architecture Section -->
+<section class="py-5 bg-white border-top">
+    <div class="container py-4 text-center">
+        <span class="badge bg-primary-subtle text-primary fw-bold text-uppercase px-3 py-2 mb-2">Technology Stack</span>
+        <h2 class="fw-bold text-dark mb-4">Modern Full-Stack Data & Analytics Architecture</h2>
+        <p class="text-secondary max-w-700 mx-auto mb-5">
+            Crafted for robustness and speed using Python's scientific computing libraries and enterprise relational databases.
+        </p>
+
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <div class="tech-badge">
+                <i class="fa-brands fa-python text-primary fs-5"></i>
+                <span>Python 3.14</span>
+            </div>
+            <div class="tech-badge">
+                <i class="fa-solid fa-database text-warning fs-5"></i>
+                <span>MySQL & SQLite Engine</span>
+            </div>
+            <div class="tech-badge">
+                <i class="fa-solid fa-table text-info fs-5"></i>
+                <span>Pandas Aggregation</span>
+            </div>
+            <div class="tech-badge">
+                <i class="fa-solid fa-square-root-variable text-success fs-5"></i>
+                <span>NumPy Vectorized Math</span>
+            </div>
+            <div class="tech-badge">
+                <i class="fa-solid fa-chart-line text-danger fs-5"></i>
+                <span>Matplotlib Visualization</span>
+            </div>
+            <div class="tech-badge">
+                <i class="fa-solid fa-bolt text-dark fs-5"></i>
+                <span>Flask Microframework</span>
+            </div>
+            <div class="tech-badge">
+                <i class="fa-brands fa-bootstrap text-primary fs-5"></i>
+                <span>Bootstrap 5 SaaS UI</span>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

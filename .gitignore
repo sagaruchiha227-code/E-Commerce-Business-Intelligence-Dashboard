@@ -1,0 +1,29 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Local Environment Variables & Secrets (Keep .env private!)
+.env
+*.env.local
+
+# IDEs & Editor configurations
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Operating System Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Test artifacts
+test.png
